@@ -1,5 +1,6 @@
 package com.sergeyk.course.ws.ui.controller;
 
+import ch.qos.logback.classic.util.LogbackMDCAdapter;
 import com.sergeyk.course.ws.ui.model.request.UserDetailsRequestModel;
 import com.sergeyk.course.ws.ui.model.response.UserRest;
 import org.springframework.http.HttpStatus;
@@ -9,10 +10,16 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.awt.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("users")
 public class UserController {
+
+    // Emulate database with a Map for this course purposes
+    private Map<String, UserRest> users = new HashMap<>();
 
     // Optional parameters could be used with either:
     //  (1) defaultValue = "xxxx"
@@ -33,13 +40,11 @@ public class UserController {
                 produces = { MediaType.APPLICATION_XML_VALUE,
                              MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity<UserRest> getUser(@PathVariable String userId) {
-        UserRest returnValue = new UserRest();
-        returnValue.setEmail("test@test.com");
-        returnValue.setFirstName("Sergey");
-        returnValue.setLastName("Kargopolov");
-
-//        return new ResponseEntity<UserRest>(HttpStatus.BAD_REQUEST);
-        return new ResponseEntity<UserRest>(returnValue, HttpStatus.OK);
+        if(users.containsKey(userId)) {
+            return new ResponseEntity<UserRest>(users.get(userId), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<UserRest>(HttpStatus.NO_CONTENT);
+        }
     }
 
     @PostMapping(   consumes = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE },
@@ -49,6 +54,11 @@ public class UserController {
         returnValue.setEmail(userDetails.getEmail());
         returnValue.setFirstName(userDetails.getFirstName());
         returnValue.setLastName(userDetails.getLastName());
+
+        String userId = UUID.randomUUID().toString();
+        returnValue.setUserId(userId);
+
+        users.put(userId, returnValue);
 
         return new ResponseEntity<UserRest>(returnValue, HttpStatus.OK);
     }
