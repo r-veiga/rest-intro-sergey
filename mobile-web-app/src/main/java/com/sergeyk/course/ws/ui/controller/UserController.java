@@ -6,14 +6,22 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("users")
 public class UserController {
 
+    // Optional parameters could be used with either:
+    //  (1) defaultValue = "xxxx"
+    //  (2) required = false
+    // but "required" has issues when dealing with not initialized primitives (help it adding "defaultValue")
+    // returns a 500 error status due to IllegalStateException
+    // Objects not initialized are set to null and there's no 500 error status but 200 Ok status
     @GetMapping
-    public String getUser(@RequestParam(value="page") int page, @RequestParam(value="limit") int limit) {
-        return "get user was called with page = " + page + " and limit = " + limit;
+    public String getUser(@RequestParam(value="page", defaultValue="1") String page,
+                          @RequestParam(value="limit", defaultValue="50", required=false) int limit,
+                          @RequestParam(value="sort", required=false) String sort) {
+        return "get user was called with page = " + page + " and limit = " + limit + " and sort = " + sort;
     }
 
     @GetMapping(path="/{userId}")
     public String getUser(@PathVariable String userId) {
-        return "get user was called with path parameter " + userId;
+        return "get user was called with parameter " + userId;
     }
 
     @PostMapping
