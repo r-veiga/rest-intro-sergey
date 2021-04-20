@@ -1,7 +1,10 @@
 package com.sergeyk.course.ws.ui.controller;
 
 import com.sergeyk.course.ws.ui.model.response.UserRest;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+
+import java.awt.*;
 
 @RestController
 @RequestMapping("users")
@@ -20,7 +23,11 @@ public class UserController {
         return "get user was called with page = " + page + " and limit = " + limit + " and sort = " + sort;
     }
 
-    @GetMapping(path="/{userId}")
+    // Can receive header "Accept=application/xml"
+    // as it produces either XML or JSON, depending on the request
+    @GetMapping(path = "/{userId}",
+                produces = { MediaType.APPLICATION_XML_VALUE,
+                             MediaType.APPLICATION_JSON_VALUE })
     public UserRest getUser(@PathVariable String userId) {
         UserRest returnValue = new UserRest();
         returnValue.setEmail("test@test.com");
