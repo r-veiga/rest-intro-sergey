@@ -1,6 +1,7 @@
 package com.sergeyk.course.ws.ui.controller;
 
 import ch.qos.logback.classic.util.LogbackMDCAdapter;
+import com.sergeyk.course.ws.ui.model.request.UpdateUserDetailRequestModel;
 import com.sergeyk.course.ws.ui.model.request.UserDetailsRequestModel;
 import com.sergeyk.course.ws.ui.model.response.UserRest;
 import org.springframework.http.HttpStatus;
@@ -63,9 +64,22 @@ public class UserController {
         return new ResponseEntity<UserRest>(returnValue, HttpStatus.OK);
     }
 
-    @PutMapping
-    public String updateUser() {
-        return "update user was called";
+    // Dealing PUT with Spring Boot needs "FormContentFilter" configured
+    // https://stackoverflow.com/questions/5894270/springmvc-is-not-recognizing-request-body-parameters-if-using-put
+    @PutMapping(
+        path = "/{userId}",
+        consumes = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE },
+        produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE }
+    )
+    public UserRest updateUser(
+        @PathVariable String userId,
+        @Valid @RequestBody UpdateUserDetailRequestModel userDetails
+    ) {
+        UserRest storedUserDetails = users.get(userId);
+        storedUserDetails.setFirstName(userDetails.getFirstName());
+        storedUserDetails.setLastName(userDetails.getLastName());
+        users.put(userId, storedUserDetails);
+        return storedUserDetails;
     }
 
     @DeleteMapping
