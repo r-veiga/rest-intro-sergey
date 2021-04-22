@@ -90,4 +90,21 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping(
+        path = "exception/{userId}",
+        produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE }
+    )
+    public ResponseEntity<UserRest> generateException(@PathVariable String userId) {
+
+        String firstName = null;
+        // ... blah
+        // ... bleh
+        int firstNameLength = firstName.length(); // throws NullPointerException
+
+        if(users.containsKey(userId)) {
+            return new ResponseEntity<UserRest>(users.get(userId), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<UserRest>(HttpStatus.NO_CONTENT);
+        }
+    }
 }
