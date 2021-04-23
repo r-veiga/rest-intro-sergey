@@ -1,6 +1,7 @@
 package com.sergeyk.course.ws.ui.controller;
 
 import ch.qos.logback.classic.util.LogbackMDCAdapter;
+import com.sergeyk.course.ws.exceptions.UserServiceException;
 import com.sergeyk.course.ws.ui.model.request.UpdateUserDetailRequestModel;
 import com.sergeyk.course.ws.ui.model.request.UserDetailsRequestModel;
 import com.sergeyk.course.ws.ui.model.response.UserRest;
@@ -96,6 +97,7 @@ public class UserController {
     )
     public ResponseEntity<UserRest> generateException(@PathVariable String userId) {
 
+        if(true) throw new UserServiceException("A user service exception is thrown");
         String firstName = null;
         // ... blah
         // ... bleh

@@ -30,13 +30,29 @@ public class AppExceptionsHandler {
     }
 
     @ExceptionHandler(value={NullPointerException.class})
-    public ResponseEntity<Object> handleNullPointerException(Exception exception, WebRequest request){
+    public ResponseEntity<Object> handleNullPointerException(NullPointerException exception, WebRequest request){
 
         String errorMessage = exception.getLocalizedMessage();
         if (errorMessage == null) {
             errorMessage = exception.toString();
         }
         CustomErrorMessage customError = new CustomErrorMessage(new Date(), ">> NULL POINTER << " + errorMessage);
+
+        return new ResponseEntity<>(
+            customError,
+            new HttpHeaders(),
+            HttpStatus.INTERNAL_SERVER_ERROR
+        );
+    }
+
+    @ExceptionHandler(value={UserServiceException.class})
+    public ResponseEntity<Object> handleUserServiceException(UserServiceException exception, WebRequest request){
+
+        String errorMessage = exception.getLocalizedMessage();
+        if (errorMessage == null) {
+            errorMessage = exception.toString();
+        }
+        CustomErrorMessage customError = new CustomErrorMessage(new Date(), ">> USER SERVICE << " + errorMessage);
 
         return new ResponseEntity<>(
             customError,
