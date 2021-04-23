@@ -60,4 +60,20 @@ public class AppExceptionsHandler {
             HttpStatus.INTERNAL_SERVER_ERROR
         );
     }
+
+    @ExceptionHandler(value={Type1Exception.class, Type2Exception.class})
+    public ResponseEntity<Object> handleBothExceptions(Exception exception, WebRequest request){
+
+        String errorMessage = exception.getLocalizedMessage();
+        if (errorMessage == null) {
+            errorMessage = exception.toString();
+        }
+        CustomErrorMessage customError = new CustomErrorMessage(new Date(), ">> TYPE 1 OR 2 << " + errorMessage);
+
+        return new ResponseEntity<>(
+            customError,
+            new HttpHeaders(),
+            HttpStatus.INTERNAL_SERVER_ERROR
+        );
+    }
 }
