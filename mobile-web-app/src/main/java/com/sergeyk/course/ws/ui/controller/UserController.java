@@ -1,22 +1,21 @@
 package com.sergeyk.course.ws.ui.controller;
 
-import ch.qos.logback.classic.util.LogbackMDCAdapter;
 import com.sergeyk.course.ws.exceptions.Type1Exception;
 import com.sergeyk.course.ws.exceptions.Type2Exception;
 import com.sergeyk.course.ws.exceptions.UserServiceException;
 import com.sergeyk.course.ws.ui.model.request.UpdateUserDetailRequestModel;
 import com.sergeyk.course.ws.ui.model.request.UserDetailsRequestModel;
 import com.sergeyk.course.ws.ui.model.response.UserRest;
+import com.sergeyk.course.ws.userservice.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("users")
@@ -24,6 +23,13 @@ public class UserController {
 
     // Emulate database with a Map for this course purposes
     private Map<String, UserRest> users = new HashMap<>();
+
+    UserService userService;
+
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     // Optional parameters could be used with either:
     //  (1) defaultValue = "xxxx"
@@ -56,16 +62,7 @@ public class UserController {
         produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE }
     )
     public ResponseEntity<UserRest> createUser(@Valid @RequestBody UserDetailsRequestModel userDetails) {
-        UserRest returnValue = new UserRest();
-        returnValue.setEmail(userDetails.getEmail());
-        returnValue.setFirstName(userDetails.getFirstName());
-        returnValue.setLastName(userDetails.getLastName());
-
-        String userId = UUID.randomUUID().toString();
-        returnValue.setUserId(userId);
-
-        users.put(userId, returnValue);
-
+        UserRest returnValue = userService.createUser(userDetails);
         return new ResponseEntity<UserRest>(returnValue, HttpStatus.OK);
     }
 
